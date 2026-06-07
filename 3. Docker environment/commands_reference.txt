@@ -1,0 +1,8 @@
+# 1. Start the entire environment
+docker compose up -d
+
+# 2. Verify Hadoop HDFS storage and directory structure
+docker exec -it namenode hdfs dfs -ls -R /yemen_archive/historical_documents/
+
+# 3. View database schema inside PostgreSQL container
+docker exec -it postgres psql -U postgres -d ye_archive -c "\dt"
