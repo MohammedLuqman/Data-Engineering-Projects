@@ -57,7 +57,7 @@ Dashboard    :  Grafana
 | # | Service | Purpose | Port |
 |---|---------|---------|------|
 | 1 | **Kafka** | Real-time streaming of music logs | 9092 |
-| 2 | **Spark Master** | Distributed data processing cluster using ( unified medallion architecture ) | 8090 |
+| 2 | **Jupyter pyspark** | data processing using ( unified medallion architecture ) | 8090 |
 | 3 | **MinIO** | Object storage for Data Lake (Bronze/Silver/Gold) | 9000 |
 | 4 | **ClickHouse** | Columnar database for song analytics | 8123 |
 | 5 | **Airflow** | Orchestrating ETL DAGs | 8081 |
