@@ -129,11 +129,4 @@ music-pipeline/
 
 ---
 
-*Built for the Music Analytics Graduation Project — Data Engineering Bootcamp 2024*
-
-```
-
-
-هل تحتاج لأي تعديل إضافي في الجداول أو تفاصيل تقنية معينة؟
-
-```
+*Built for the Music Analytics Graduation Project — Data Engineering Bootcamp 2026
