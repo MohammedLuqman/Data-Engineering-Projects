@@ -1,5 +1,3 @@
-
-```markdown
 # 🎵 Music Analytics Data Pipeline
 ### Enterprise-Grade Music Data Lakehouse — Docker Compose Stack
 
@@ -13,40 +11,43 @@
 
 ## 📐 Architecture
 
-
-```
-
+```text
 Music Streaming API ──────────────────────────┐
 User Interaction Logs ────────────────────────►│
-│
-┌─────────▼─────────┐
-│   Apache Kafka     │
-│   (Ingestion)      │
-└─────────┬──────────┘
-│ Spark Streaming
-┌─────────▼──────────┐
-│   MinIO: BRONZE     │  Raw Data
-│  (Parquet + JSON)   │
-└─────────┬──────────┘
-│ Spark Batch ETL
-┌─────────▼──────────┐
-│   MinIO: SILVER     │  Cleaned Data
-│     (Parquet)       │
-└─────────┬──────────┘
-│ Spark Analytics
-┌─────────▼──────────┐
-│   MinIO: GOLD       │  Aggregated
-│     (Parquet)       │
-└──────┬─────┬───────┘
-│     │
-┌─────────────▼┐   ┌▼──────────────────┐
-│  ClickHouse  │   │  Trend Analysis   │
-│  (Analytics) │   │  (Dashboards)     │
-└──────────────┘   └───────────────────┘
+                                               │
+                                    ┌──────────▼──────────┐
+                                    │    Apache Kafka     │
+                                    │    (Ingestion)      │
+                                    └──────────┬──────────┘
+                                               │
+                                       Spark Streaming
+                                               │
+                                    ┌──────────▼──────────┐
+                                    │   MinIO: BRONZE     │
+                                    │ Raw Data (Parquet)  │
+                                    └──────────┬──────────┘
+                                               │
+                                       Spark Batch ETL
+                                               │
+                                    ┌──────────▼──────────┐
+                                    │   MinIO: SILVER     │
+                                    │  Cleaned Parquet    │
+                                    └──────────┬──────────┘
+                                               │
+                                      Spark Analytics
+                                               │
+                                    ┌──────────▼──────────┐
+                                    │    MinIO: GOLD      │
+                                    │ Aggregated Parquet  │
+                                    └───────┬─────┬───────┘
+                                            │     │
+                               ┌────────────▼┐   ┌▼─────────────────┐
+                               │ ClickHouse  │   │ Trend Analysis   │
+                               │ Analytics   │   │ Dashboards       │
+                               └─────────────┘   └──────────────────┘
 
-Orchestration: Apache Airflow
-Monitoring:    Prometheus + Grafana
-
+Orchestration : Apache Airflow
+Monitoring    : Prometheus + Grafana
 ```
 
 ---
@@ -67,20 +68,21 @@ Monitoring:    Prometheus + Grafana
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker Desktop & Docker Compose v2.
-- 16GB RAM recommended for full stack.
+
+- Docker Desktop
+- Docker Compose v2
+- 16 GB RAM recommended for the full stack
 
 ### 1. Launch the Stack
+
 ```bash
 docker-compose up -d --build
-
 ```
 
 ### 2. Verify Health
 
 ```bash
 docker-compose ps
-
 ```
 
 ---
@@ -88,7 +90,7 @@ docker-compose ps
 ## 🌐 Access Points
 
 | Interface | URL |
-| --- | --- |
+|-----------|-----|
 | **Kafka UI** | http://localhost:8090 |
 | **Grafana** | http://localhost:3000 |
 | **Airflow** | http://localhost:8081 |
@@ -98,35 +100,67 @@ docker-compose ps
 
 ## 📂 Project Structure
 
-```
+```text
 music-pipeline/
-├── dags/               ← Airflow ETL workflows
-├── notebooks/          ← PySpark logic for song analytics
-├── clickhouse/         ← Gold layer schema
-├── docker-compose.yml  ← Infrastructure definition
-└── scripts/            ← Data ingestion helpers
-
+├── dags/                # Airflow ETL workflows
+├── notebooks/           # PySpark analytics notebooks
+├── clickhouse/          # Gold layer schema
+├── docker-compose.yml   # Infrastructure definition
+└── scripts/             # Data ingestion helpers
 ```
 
 ---
 
 ## 📊 Analytics Goals
 
-* **Top Tracks:** Real-time ranking of popular songs.
-* **User Insights:** Analyzing user listening preferences.
-* **Genre Trends:** Tracking the rise and fall of music genres.
+- 🎵 **Top Tracks:** Real-time ranking of the most popular songs.
+- 👥 **User Insights:** Analyze user listening behavior and preferences.
+- 🎼 **Genre Trends:** Discover rising and declining music genres over time.
 
 ---
 
 ## 💡 Performance Tuning & Roadmap
 
-* **Performance:** Optimized partitioning in ClickHouse for fast analytical queries.
-* **Roadmap:**
-* Future integration with **Apache Iceberg** for full Lakehouse capabilities.
-* Implementing automated anomaly detection for streaming logs.
+### Performance
 
+- Optimized ClickHouse partitioning for high-speed analytical queries.
+- Efficient Parquet storage for Bronze, Silver, and Gold layers.
+- Spark distributed processing for scalable ETL pipelines.
 
+### Roadmap
+
+- Integrate **Apache Iceberg** to enable full Lakehouse capabilities.
+- Add automated anomaly detection for streaming events.
+- Build real-time dashboards powered by Grafana.
+- Support incremental processing and schema evolution.
 
 ---
 
-*Built for the Music Analytics Graduation Project — Data Engineering Bootcamp 2026
+## 🛠️ Technology Stack
+
+| Layer | Technology |
+|--------|------------|
+| Streaming | Apache Kafka |
+| Processing | Apache Spark |
+| Storage | MinIO |
+| Analytics | ClickHouse |
+| Orchestration | Apache Airflow |
+| Monitoring | Prometheus + Grafana |
+| Containerization | Docker Compose |
+
+---
+
+## 📄 License
+
+This project is developed for educational purposes as part of the **Data Engineering Bootcamp 2024 Graduation Project**.
+
+---
+
+## 👨‍💻 Author
+
+**Music Analytics Data Pipeline**  
+Enterprise-grade Data Engineering project demonstrating a modern Lakehouse architecture using Kafka, Spark, MinIO, ClickHouse, and Airflow.
+
+---
+
+*Built for the Music Analytics Graduation Project — Data Engineering Bootcamp 2024*
