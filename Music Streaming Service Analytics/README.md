@@ -12,7 +12,7 @@
 ## 📐 Architecture
 
 ```text
-Music Streaming API ──────────────────────────┐
+Music Streaming API + user Profiles ───────────┐
 User Interaction Logs ────────────────────────►│
                                                │
                                     ┌──────────▼──────────┐
@@ -47,7 +47,7 @@ User Interaction Logs ───────────────────�
                                └─────────────┘   └──────────────────┘
 
 Orchestration : Apache Airflow
-Monitoring    : Prometheus + Grafana
+Dashboard    :  Grafana
 ```
 
 ---
@@ -57,7 +57,7 @@ Monitoring    : Prometheus + Grafana
 | # | Service | Purpose | Port |
 |---|---------|---------|------|
 | 1 | **Kafka** | Real-time streaming of music logs | 9092 |
-| 2 | **Spark Master** | Distributed data processing cluster | 8090 |
+| 2 | **Spark Master** | Distributed data processing cluster using ( unified medallion architecture ) | 8090 |
 | 3 | **MinIO** | Object storage for Data Lake (Bronze/Silver/Gold) | 9000 |
 | 4 | **ClickHouse** | Columnar database for song analytics | 8123 |
 | 5 | **Airflow** | Orchestrating ETL DAGs | 8081 |
@@ -70,13 +70,12 @@ Monitoring    : Prometheus + Grafana
 ### Prerequisites
 
 - Docker Desktop
-- Docker Compose v2
 - 16 GB RAM recommended for the full stack
 
 ### 1. Launch the Stack
 
 ```bash
-docker-compose up -d --build
+docker-compose up -d
 ```
 
 ### 2. Verify Health
@@ -126,13 +125,7 @@ music-pipeline/
 - Optimized ClickHouse partitioning for high-speed analytical queries.
 - Efficient Parquet storage for Bronze, Silver, and Gold layers.
 - Spark distributed processing for scalable ETL pipelines.
-
-### Roadmap
-
-- Integrate **Apache Iceberg** to enable full Lakehouse capabilities.
-- Add automated anomaly detection for streaming events.
 - Build real-time dashboards powered by Grafana.
-- Support incremental processing and schema evolution.
 
 ---
 
@@ -145,14 +138,8 @@ music-pipeline/
 | Storage | MinIO |
 | Analytics | ClickHouse |
 | Orchestration | Apache Airflow |
-| Monitoring | Prometheus + Grafana |
+| Monitoring | Grafana |
 | Containerization | Docker Compose |
-
----
-
-## 📄 License
-
-This project is developed for educational purposes as part of the **Data Engineering Bootcamp 2024 Graduation Project**.
 
 ---
 
@@ -160,7 +147,3 @@ This project is developed for educational purposes as part of the **Data Enginee
 
 **Music Analytics Data Pipeline**  
 Enterprise-grade Data Engineering project demonstrating a modern Lakehouse architecture using Kafka, Spark, MinIO, ClickHouse, and Airflow.
-
----
-
-*Built for the Music Analytics Graduation Project — Data Engineering Bootcamp 2024*
