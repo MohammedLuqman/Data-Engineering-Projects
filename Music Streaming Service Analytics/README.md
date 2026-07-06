@@ -102,10 +102,11 @@ docker-compose ps
 ```text
 music-pipeline/
 ├── dags/                # Airflow ETL workflows
+├── jars/                # Required jars
 ├── notebooks/           # PySpark analytics notebooks
 ├── clickhouse/          # Gold layer schema
 ├── docker-compose.yml   # Infrastructure definition
-└── scripts/             # Data ingestion helpers
+└── logs/             # logs 
 ```
 
 ---
