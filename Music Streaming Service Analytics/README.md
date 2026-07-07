@@ -482,18 +482,6 @@ Grafana connects directly to ClickHouse, enabling low-latency visualization of a
 
 The project includes an AI recommendation workflow designed to generate personalized music recommendations.
 
-The recommendation pipeline can leverage processed datasets from the Silver and Gold layers to identify user listening behavior and music preferences.
-
-Typical recommendation inputs include:
-
-- Listening history
-- Favorite genres
-- Frequently played artists
-- User engagement
-- Historical listening sessions
-
-This workflow demonstrates how machine learning components can be integrated into a modern Data Lakehouse architecture.
-
 ---
 
 # 📊 Data Quality
@@ -512,73 +500,6 @@ Validation steps include:
 These checks ensure downstream analytical datasets remain reliable and consistent.
 
 ---
-
-# ⚡ Performance Optimizations
-
-Several optimization techniques are used throughout the project.
-
-## Apache Spark
-
-- Distributed processing
-- Lazy evaluation
-- Parallel execution
-- Efficient Parquet storage
-
-## MinIO
-
-- Columnar Parquet files
-- Optimized object storage
-- Cost-effective data lake
-
-## ClickHouse
-
-- Column-oriented storage
-- Vectorized execution
-- Fast aggregation queries
-- High compression ratio
-
-These optimizations significantly improve analytical performance while reducing storage overhead.
-
----
-
-
-# 🔄 Complete Data Pipeline
-
-```text
-Music Streaming Events
-        │
-        ▼
-Kafka Producer
-        │
-        ▼
-Apache Kafka
-        │
-        ▼
-Spark Structured Streaming
-        │
-        ▼
-Bronze Layer (Raw)
-        │
-        ▼
-Spark Batch ETL
-        │
-        ▼
-Silver Layer
-        │
-        ▼
-Business Aggregations
-        │
-        ▼
-Gold Layer
-        │
-        ├────────────► ClickHouse
-        │                    │
-        │                    ▼
-        │              Grafana Dashboards
-        │
-        ▼
-Recommendation Pipeline
-```
 
 ## Grafana cannot connect to ClickHouse
 
