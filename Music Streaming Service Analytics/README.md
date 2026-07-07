@@ -1,150 +1,728 @@
-# 🎵 Music Analytics Data Pipeline
-### Enterprise-Grade Music Data Lakehouse — Docker Compose Stack
+# 🎵 Music Analytics Data Lakehouse
 
-[![Apache Kafka](https://img.shields.io/badge/Kafka-3.7.1-231F20?logo=apachekafka)](https://kafka.apache.org/)
-[![Apache Spark](https://img.shields.io/badge/Spark-3.5.0-E25A1C?logo=apachespark)](https://spark.apache.org/)
-[![Apache Airflow](https://img.shields.io/badge/Airflow-2.9.1-017CEE?logo=apacheairflow)](https://airflow.apache.org/)
-[![MinIO](https://img.shields.io/badge/MinIO-Latest-C72E49?logo=minio)](https://min.io/)
-[![ClickHouse](https://img.shields.io/badge/ClickHouse-Latest-FFCC01?logo=clickhouse)](https://clickhouse.com/)
+> **An end-to-end enterprise-grade Data Engineering project that simulates a modern music streaming analytics platform using Apache Kafka, Apache Spark, Apache Airflow, MinIO, ClickHouse, Grafana, and Docker Compose.**
+
+![Architecture](docs/images/architecture.png)
+
+![Kafka](https://img.shields.io/badge/Apache-Kafka-black?logo=apachekafka)
+![Spark](https://img.shields.io/badge/Apache-Spark-orange?logo=apachespark)
+![Airflow](https://img.shields.io/badge/Apache-Airflow-blue?logo=apacheairflow)
+![ClickHouse](https://img.shields.io/badge/ClickHouse-yellow?logo=clickhouse)
+![Grafana](https://img.shields.io/badge/Grafana-orange?logo=grafana)
+![MinIO](https://img.shields.io/badge/MinIO-red?logo=minio)
+![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)
 
 ---
 
-## 📐 Architecture
+# 📖 Table of Contents
 
-```text
-Music Streaming API + user Profiles ───────────┐
-User Interaction Logs ────────────────────────►│
-                                               │
-                                    ┌──────────▼──────────┐
-                                    │    Apache Kafka     │
-                                    │    (Ingestion)      │
-                                    └──────────┬──────────┘
-                                               │
-                                       Spark Streaming
-                                               │
-                                    ┌──────────▼──────────┐
-                                    │   MinIO: BRONZE     │
-                                    │ Raw Data (Parquet)  │
-                                    └──────────┬──────────┘
-                                               │
-                                       Spark Batch ETL
-                                               │
-                                    ┌──────────▼──────────┐
-                                    │   MinIO: SILVER     │
-                                    │  Cleaned Parquet    │
-                                    └──────────┬──────────┘
-                                               │
-                                      Spark Analytics
-                                               │
-                                    ┌──────────▼──────────┐
-                                    │    MinIO: GOLD      │
-                                    │ Aggregated Parquet  │
-                                    └───────┬─────┬───────┘
-                                            │     │
-                               ┌────────────▼┐   ┌▼─────────────────┐
-                               │ ClickHouse  │   │ Trend Analysis   │
-                               │ Analytics   │   │ Dashboards       │
-                               └─────────────┘   └──────────────────┘
+- Overview
+- Business Problem
+- Solution Overview
+- Architecture
+- Data Pipeline
+- Technology Stack
+- Project Structure
+- Installation
+- Configuration
+- Running the Project
+- Airflow Workflows
+- Streaming Pipeline
+- Analytics Layer
+- Dashboard
+- Future Improvements
+- License
 
-Orchestration : Apache Airflow
-Dashboard    :  Grafana
+---
+
+# 📌 Overview
+
+Modern music streaming platforms generate millions of user interactions every day, including song plays, likes, skips, searches, playlists, and listening sessions.
+
+Traditional databases are not designed to efficiently process high-volume streaming events while simultaneously supporting analytical workloads.
+
+This project demonstrates how a modern **Lakehouse Architecture** can ingest, process, transform, and analyze streaming music events using scalable open-source technologies.
+
+The pipeline combines both **real-time** and **batch processing** to build a complete analytics platform capable of generating business insights from streaming events.
+
+---
+
+# 🎯 Business Problem
+
+Music streaming companies need to answer questions such as:
+
+- What songs are currently trending?
+- Which artists are growing in popularity?
+- Which genres are increasing or decreasing over time?
+- How long do users listen before skipping songs?
+- What listening patterns exist across different users?
+- Which recommendations generate the highest engagement?
+
+Answering these questions requires processing millions of streaming events efficiently while maintaining a scalable analytics platform.
+
+---
+
+# 💡 Solution
+
+This project implements an end-to-end Data Lakehouse that performs:
+
+- Real-time event ingestion using Apache Kafka
+- Distributed stream processing using Apache Spark
+- Bronze / Silver / Gold Medallion Architecture
+- Object storage using MinIO
+- Analytical storage using ClickHouse
+- Workflow orchestration using Apache Airflow
+- Interactive dashboards using Grafana
+
+The architecture separates ingestion, processing, storage, orchestration, and analytics into independent components, making the platform modular and scalable.
+
+---
+
+# 🏗 Architecture
+
+```
+                 Music Streaming Events
+                           │
+                           ▼
+                 Apache Kafka (Streaming)
+                           │
+                           ▼
+                Spark Structured Streaming
+                           │
+                           ▼
+               Bronze Layer (Raw Parquet)
+                           │
+                           ▼
+                  Spark Batch Cleaning
+                           │
+                           ▼
+             Silver Layer (Clean Parquet)
+                           │
+                           ▼
+                Spark Aggregation Jobs
+                           │
+                           ▼
+             Gold Layer (Business Metrics)
+                    │                 │
+                    ▼                 ▼
+              ClickHouse         Grafana
+                    │
+                    ▼
+              Business Analytics
+
+              Apache Airflow
+        (Pipeline Orchestration)
 ```
 
 ---
 
-## 🧱 Services Overview
+# 🚀 Key Features
 
-| # | Service | Purpose | Port |
-|---|---------|---------|------|
-| 1 | **Kafka** | Real-time streaming of music logs | 9092 |
-| 2 | **Jupyter pyspark** | data processing using ( unified medallion architecture ) | 8090 |
-| 3 | **MinIO** | Object storage for Data Lake (Bronze/Silver/Gold) | 9000 |
-| 4 | **ClickHouse** | Columnar database for song analytics | 8123 |
-| 5 | **Airflow** | Orchestrating ETL DAGs | 8081 |
-| 6 | **Grafana** | Visualizing music trends & system metrics | 3000 |
+✔ Real-time data ingestion
 
----
+✔ Distributed Spark processing
 
-## 🚀 Quick Start
+✔ Medallion Architecture
 
-### Prerequisites
+✔ Automated Airflow workflows
 
-- Docker Desktop
-- 16 GB RAM recommended for the full stack
+✔ High-performance ClickHouse analytics
 
-### 1. Launch the Stack
+✔ Interactive Grafana dashboards
 
-```bash
-docker-compose up -d
-```
+✔ Docker Compose deployment
 
-### 2. Verify Health
+✔ Modular project architecture
 
-```bash
-docker-compose ps
-```
+✔ Enterprise-ready design
 
 ---
 
-## 🌐 Access Points
-
-| Interface | URL |
-|-----------|-----|
-| **Kafka UI** | http://localhost:8090 |
-| **Grafana** | http://localhost:3000 |
-| **Airflow** | http://localhost:8081 |
-| **ClickHouse** | http://localhost:8123 |
-
----
-
-## 📂 Project Structure
-
-```text
-music-pipeline/
-├── dags/                # Airflow ETL workflows
-├── jars/                # Required jars
-├── notebooks/           # PySpark analytics notebooks
-├── clickhouse/          # Gold layer schema
-├── docker-compose.yml   # Infrastructure definition
-└── logs/             # logs 
-```
-
----
-
-## 📊 Analytics Goals
-
-- 🎵 **Top Tracks:** Real-time ranking of the most popular songs.
-- 👥 **User Insights:** Analyze user listening behavior and preferences.
-- 🎼 **Genre Trends:** Discover rising and declining music genres over time.
-
----
-
-## 💡 Performance Tuning & Roadmap
-
-### Performance
-
-- Optimized ClickHouse partitioning for high-speed analytical queries.
-- Efficient Parquet storage for Bronze, Silver, and Gold layers.
-- Spark distributed processing for scalable ETL pipelines.
-- Build real-time dashboards powered by Grafana.
-
----
-
-## 🛠️ Technology Stack
+# 🛠 Technology Stack
 
 | Layer | Technology |
-|--------|------------|
+|---------|------------|
 | Streaming | Apache Kafka |
 | Processing | Apache Spark |
-| Storage | MinIO |
-| Analytics | ClickHouse |
-| Orchestration | Apache Airflow |
-| Monitoring | Grafana |
+| Workflow Orchestration | Apache Airflow |
+| Object Storage | MinIO |
+| Analytics Database | ClickHouse |
+| Visualization | Grafana |
 | Containerization | Docker Compose |
 
 ---
 
-## 👨‍💻 Author
+# ⚙ End-to-End Data Flow
 
-**Music Analytics Data Pipeline**  
-Enterprise-grade Data Engineering project demonstrating a modern Lakehouse architecture using Kafka, Spark, MinIO, ClickHouse, and Airflow.
+The pipeline processes streaming events through multiple stages.
+
+## Step 1 — Event Generation
+
+Music listening events are continuously generated from the simulated music streaming application.
+
+Each event contains information such as:
+
+- User ID
+- Song ID
+- Artist
+- Genre
+- Listening duration
+- Timestamp
+- Device
+- Country
+
+↓
+
+## Step 2 — Kafka Streaming
+
+Events are published into Kafka topics where they become available for downstream consumers.
+
+↓
+
+## Step 3 — Spark Structured Streaming
+
+Spark continuously consumes Kafka topics and performs:
+
+- Schema validation
+- Timestamp conversion
+- Data enrichment
+- Invalid record filtering
+
+↓
+
+## Step 4 — Bronze Layer
+
+Raw events are stored inside MinIO as immutable Parquet files.
+
+↓
+
+## Step 5 — Silver Layer
+
+Spark cleans, standardizes, and enriches the data before writing optimized Parquet datasets.
+
+↓
+
+## Step 6 — Gold Layer
+
+Business aggregations are generated including:
+
+- Top Songs
+- Top Artists
+- Listening Time
+- Genre Statistics
+- User Engagement Metrics
+
+↓
+
+## Step 7 — ClickHouse
+
+Aggregated datasets are loaded into ClickHouse for ultra-fast analytical queries.
+
+↓
+
+## Step 8 — Grafana
+
+Grafana connects directly to ClickHouse to visualize business KPIs and trends in real time.
+
+---
+
+---
+
+# 📂 Project Structure
+
+```text
+music-analytics-data-lakehouse/
+│
+├── dags/                         # Apache Airflow DAGs
+│   ├── kafka_stream_ingestion.py
+│   ├── lastfm_to_minio.py
+│   ├── music_recommendations_ai.py
+│   └── ...
+│
+├── spark/
+│   ├── streaming/
+│   ├── batch/
+│   └── transformations/
+│
+├── kafka/
+│   ├── producer.py
+│   └── topics/
+│
+├── clickhouse/
+│   ├── schema.sql
+│   ├── views.sql
+│   └── initialization/
+│
+├── grafana/
+│   ├── dashboards/
+│   ├── provisioning/
+│   └── datasource/
+│
+├── notebooks/
+│
+├── jars/
+│
+├── docker-compose.yml
+│
+├── logs/
+│
+└── README.md
+```
+
+> The exact folder names may vary depending on your implementation, but the project is organized into independent services to keep ingestion, processing, orchestration, and analytics loosely coupled.
+
+---
+
+# ⚙ Infrastructure Components
+
+The project is deployed entirely using **Docker Compose**, allowing every component to communicate over a shared network while remaining independently scalable.
+
+| Service | Description |
+|----------|-------------|
+| Apache Kafka | Streaming platform responsible for ingesting music events. |
+| Apache Spark | Executes both streaming and batch ETL workloads. |
+| Apache Airflow | Schedules and orchestrates all data pipelines. |
+| MinIO | Stores Bronze, Silver, and Gold datasets in Parquet format. |
+| ClickHouse | Provides ultra-fast analytical queries over aggregated datasets. |
+| Grafana | Visualizes business metrics and operational dashboards. |
+
+---
+
+# 🚀 Getting Started
+
+## Prerequisites
+
+Before running the project, ensure the following software is installed:
+
+- Docker Desktop
+- Docker Compose
+- Git
+
+Recommended system resources:
+
+- 16 GB RAM
+- 4 CPU cores
+- 20+ GB available disk space
+
+---
+
+# 📥 Clone Repository
+
+```bash
+git clone https://github.com/<your-username>/music-analytics-data-lakehouse.git
+
+cd music-analytics-data-lakehouse
+```
+
+---
+
+# ▶ Start the Infrastructure
+
+Launch every service using Docker Compose.
+
+```bash
+docker compose up -d
+```
+
+Verify that all containers are healthy.
+
+```bash
+docker compose ps
+```
+
+---
+
+# 🌐 Available Services
+
+| Service | Default Port |
+|----------|--------------|
+| Kafka | 9092 |
+| Spark Master | 8090 |
+| Airflow | 8081 |
+| MinIO | 9000 |
+| ClickHouse HTTP | 8123 |
+| Grafana | 3000 |
+
+---
+
+# 📊 Airflow Workflows
+
+Apache Airflow orchestrates the complete analytics pipeline.
+
+Each DAG is responsible for a specific stage of the platform.
+
+Example responsibilities include:
+
+- Starting Kafka ingestion
+- Loading external music datasets
+- Executing Spark transformations
+- Running scheduled ETL jobs
+- Building analytical datasets
+- Triggering recommendation workflows
+- Performing health checks
+
+This orchestration layer guarantees that every processing stage executes in the correct order while providing monitoring, retry mechanisms, scheduling, and execution history.
+
+---
+
+# 🎧 Streaming Pipeline
+
+The streaming pipeline is responsible for continuously processing music listening events.
+
+## Event Producer
+
+The producer simulates real-time music activity by publishing events into Kafka topics.
+
+Each event may include:
+
+- User ID
+- Song ID
+- Artist
+- Album
+- Genre
+- Device
+- Country
+- Timestamp
+- Listening Duration
+
+---
+
+## Kafka
+
+Kafka serves as the central event streaming platform.
+
+Benefits include:
+
+- High throughput
+- Fault tolerance
+- Horizontal scalability
+- Decoupled architecture
+
+Instead of sending data directly to Spark, producers publish events into Kafka where consumers can process them independently.
+
+---
+
+## Spark Structured Streaming
+
+Spark continuously consumes Kafka topics.
+
+Streaming transformations include:
+
+- Parsing JSON messages
+- Schema validation
+- Null filtering
+- Timestamp normalization
+- Data enrichment
+- Error handling
+
+After processing, validated events are written into the Bronze layer.
+
+---
+
+# 🥉 Bronze Layer
+
+The Bronze layer stores raw immutable data exactly as it was received.
+
+Characteristics:
+
+- Raw events
+- Append-only
+- Historical archive
+- Parquet format
+- Stored inside MinIO
+
+No business transformations are applied at this stage.
+
+---
+
+# 🥈 Silver Layer
+
+The Silver layer contains cleaned and standardized datasets.
+
+Transformations include:
+
+- Removing invalid records
+- Handling missing values
+- Standardizing data types
+- Removing duplicates
+- Applying business rules
+
+These datasets become the trusted source for analytics.
+
+---
+
+# 🥇 Gold Layer
+
+The Gold layer contains business-ready datasets optimized for reporting.
+
+Typical aggregations include:
+
+- Most streamed songs
+- Top artists
+- Listening trends
+- Genre popularity
+- Daily active users
+- User engagement statistics
+
+These datasets are optimized for BI workloads.
+
+---
+
+# ⚡ ClickHouse Analytics
+
+Gold datasets are loaded into ClickHouse.
+
+ClickHouse provides:
+
+- Columnar storage
+- High compression
+- Extremely fast analytical queries
+- Real-time dashboard support
+
+Example analytical questions include:
+
+- Top songs today
+- Most active listeners
+- Trending genres
+- Average listening duration
+- Daily streaming volume
+
+---
+
+# 📈 Analytics Dashboard
+
+The project includes Grafana dashboards that provide real-time insights into music streaming activity.
+
+Example visualizations include:
+
+- 🎵 Top Streamed Songs
+- 🎤 Most Popular Artists
+- 🎼 Genre Distribution
+- 👤 User Listening Activity
+- 🌍 Listening Activity by Country
+- ⏱ Average Listening Duration
+- 📅 Daily Streaming Volume
+- 📊 Platform Growth Trends
+
+Grafana connects directly to ClickHouse, enabling low-latency visualization of aggregated business metrics.
+
+---
+
+# 🤖 Recommendation Pipeline
+
+The project includes an AI recommendation workflow designed to generate personalized music recommendations.
+
+The recommendation pipeline can leverage processed datasets from the Silver and Gold layers to identify user listening behavior and music preferences.
+
+Typical recommendation inputs include:
+
+- Listening history
+- Favorite genres
+- Frequently played artists
+- User engagement
+- Historical listening sessions
+
+This workflow demonstrates how machine learning components can be integrated into a modern Data Lakehouse architecture.
+
+---
+
+# 📊 Data Quality
+
+Data quality is maintained throughout the pipeline using Spark transformations.
+
+Validation steps include:
+
+- Schema validation
+- Missing value handling
+- Duplicate removal
+- Timestamp normalization
+- Invalid record filtering
+- Data type standardization
+
+These checks ensure downstream analytical datasets remain reliable and consistent.
+
+---
+
+# ⚡ Performance Optimizations
+
+Several optimization techniques are used throughout the project.
+
+## Apache Spark
+
+- Distributed processing
+- Lazy evaluation
+- Parallel execution
+- Efficient Parquet storage
+
+## MinIO
+
+- Columnar Parquet files
+- Optimized object storage
+- Cost-effective data lake
+
+## ClickHouse
+
+- Column-oriented storage
+- Vectorized execution
+- Fast aggregation queries
+- High compression ratio
+
+These optimizations significantly improve analytical performance while reducing storage overhead.
+
+---
+
+# 📷 Dashboard Preview
+
+## Grafana Dashboard
+
+> Replace the following images with actual dashboard screenshots.
+
+![Dashboard 1](dashboard/images/dashboard1.png)
+
+![Dashboard 2](dashboard/images/dashboard2.png)
+
+![Dashboard 3](dashboard/images/dashboard3.png)
+
+---
+
+# 🔄 Complete Data Pipeline
+
+```text
+Music Streaming Events
+        │
+        ▼
+Kafka Producer
+        │
+        ▼
+Apache Kafka
+        │
+        ▼
+Spark Structured Streaming
+        │
+        ▼
+Bronze Layer (Raw)
+        │
+        ▼
+Spark Batch ETL
+        │
+        ▼
+Silver Layer
+        │
+        ▼
+Business Aggregations
+        │
+        ▼
+Gold Layer
+        │
+        ├────────────► ClickHouse
+        │                    │
+        │                    ▼
+        │              Grafana Dashboards
+        │
+        ▼
+Recommendation Pipeline
+```
+
+---
+
+# 📌 Learning Objectives
+
+This project demonstrates practical experience with:
+
+- Event Streaming
+- Distributed Computing
+- Batch Processing
+- Real-Time Processing
+- Data Lakehouse Architecture
+- Workflow Orchestration
+- Data Warehousing
+- Analytical Databases
+- Business Intelligence
+- Containerized Infrastructure
+
+---
+
+# 🚀 Future Improvements
+
+Potential enhancements include:
+
+- Apache Iceberg integration
+- Delta Lake support
+- Kubernetes deployment
+- CI/CD pipeline using GitHub Actions
+- Data quality testing with Great Expectations
+- dbt transformation layer
+- Prometheus monitoring
+- Authentication and authorization
+- Multi-node Spark cluster
+- Multi-broker Kafka cluster
+- Real-time anomaly detection
+- Advanced recommendation models
+
+---
+
+# 🛠 Troubleshooting
+
+## Kafka is not starting
+
+```bash
+docker compose logs kafka
+```
+
+---
+
+## Airflow DAGs are missing
+
+```bash
+docker compose restart airflow
+```
+
+---
+
+## Spark jobs fail
+
+Check the Spark Master UI and worker logs for execution details.
+
+---
+
+## Grafana cannot connect to ClickHouse
+
+Verify that:
+
+- ClickHouse container is healthy.
+- Network connectivity exists between containers.
+- Grafana datasource configuration is correct.
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+If you have ideas for improving the project, feel free to open an issue or submit a pull request.
+
+---
+
+# 📄 License
+
+This project is intended for educational and portfolio purposes.
+
+Feel free to fork, learn from, and extend the project.
+
+---
+
+# 👨‍💻 Author
+
+**Mohammed Luqman**
+
+Data Engineering | Big Data | Apache Spark | Apache Kafka | Airflow | ClickHouse | Docker | Python
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
+
+---
+
+# ⭐ Support
+
+If this project helped you learn something new, don't forget to star the repository.
+
+Your support helps improve future open-source Data Engineering projects.
