@@ -1,4 +1,3 @@
-
 # 🎵 Music Analytics Streaming Service
 
 > **An end-to-end enterprise-grade Data Engineering project that simulates a modern music streaming analytics platform using Apache Kafka, Apache Spark, Apache Airflow, MinIO, ClickHouse, Grafana, and Docker Compose.**
@@ -285,7 +284,7 @@ Before running the project, ensure the following software is installed:
 # 📥 Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/music-analytics-data-lakehouse.git
+git clone https://github.com/<your-username>/Music-Streaming-Service-Analytics.git
 ```
 
 
