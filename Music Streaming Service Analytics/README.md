@@ -1,4 +1,4 @@
-# 🎵 Music Analytics Data Lakehouse
+# 🎵 Music Analytics Streaming Service
 
 > **An end-to-end enterprise-grade Data Engineering project that simulates a modern music streaming analytics platform using Apache Kafka, Apache Spark, Apache Airflow, MinIO, ClickHouse, Grafana, and Docker Compose.**
 
