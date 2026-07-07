@@ -309,7 +309,7 @@ docker compose ps
 | Service | Default Port |
 |----------|--------------|
 | Kafka UI | 9092 |
-| Spark Master | 8090 |
+| pyspark-notebook | 8888 |
 | Airflow | 8081 |
 | MinIO | 9000 |
 | ClickHouse HTTP | 8123 |
