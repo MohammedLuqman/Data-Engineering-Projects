@@ -512,14 +512,6 @@ Verify that:
 
 ---
 
-# 🤝 Contributing
-
-Contributions are welcome.
-
-If you have ideas for improving the project, feel free to open an issue or submit a pull request.
-
----
-
 # 📄 License
 
 This project is intended for educational and portfolio purposes.
