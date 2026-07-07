@@ -89,7 +89,7 @@ The architecture separates ingestion, processing, storage, orchestration, and an
                 Spark Structured Streaming
                            │
                            ▼
-               Bronze Layer (Raw Parquet)
+               Bronze Layer (Raw JSON, CSV)
                            │
                            ▼
                   Spark Batch Cleaning
