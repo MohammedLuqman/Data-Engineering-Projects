@@ -2,7 +2,6 @@
 
 > **An end-to-end enterprise-grade Data Engineering project that simulates a modern music streaming analytics platform using Apache Kafka, Apache Spark, Apache Airflow, MinIO, ClickHouse, Grafana, and Docker Compose.**
 
-![Architecture](docs/images/architecture.png)
 
 ![Kafka](https://img.shields.io/badge/Apache-Kafka-black?logo=apachekafka)
 ![Spark](https://img.shields.io/badge/Apache-Spark-orange?logo=apachespark)
