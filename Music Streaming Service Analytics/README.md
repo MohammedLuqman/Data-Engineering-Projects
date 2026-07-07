@@ -238,28 +238,16 @@ music-analytics-data-lakehouse/
 │   ├── music_recommendations_ai.py
 │   └── ...
 │
-├── spark/
-│   ├── streaming/
-│   ├── batch/
-│   └── transformations/
-│
-├── kafka/
-│   ├── producer.py
-│   └── topics/
-│
 ├── clickhouse/
-│   ├── schema.sql
-│   ├── views.sql
-│   └── initialization/
+│   ├── music_events.sql
+│   ├── user_recommendations.sql
 │
 ├── grafana/
 │   ├── dashboards/
-│   ├── provisioning/
-│   └── datasource/
+
+├── notebooks/ scripts/ spark_processor.ipynb
 │
-├── notebooks/
-│
-├── jars/
+├── jars/ Requirements.txt
 │
 ├── docker-compose.yml
 │
@@ -267,10 +255,6 @@ music-analytics-data-lakehouse/
 │
 └── README.md
 ```
-
-> The exact folder names may vary depending on your implementation, but the project is organized into independent services to keep ingestion, processing, orchestration, and analytics loosely coupled.
-
----
 
 # ⚙ Infrastructure Components
 
@@ -295,25 +279,14 @@ Before running the project, ensure the following software is installed:
 
 - Docker Desktop
 - Docker Compose
-- Git
 
-Recommended system resources:
-
-- 16 GB RAM
-- 4 CPU cores
-- 20+ GB available disk space
-
----
 
 # 📥 Clone Repository
 
 ```bash
 git clone https://github.com/<your-username>/music-analytics-data-lakehouse.git
-
-cd music-analytics-data-lakehouse
 ```
 
----
 
 # ▶ Start the Infrastructure
 
@@ -335,7 +308,7 @@ docker compose ps
 
 | Service | Default Port |
 |----------|--------------|
-| Kafka | 9092 |
+| Kafka UI | 9092 |
 | Spark Master | 8090 |
 | Airflow | 8081 |
 | MinIO | 9000 |
@@ -354,9 +327,7 @@ Example responsibilities include:
 
 - Starting Kafka ingestion
 - Loading external music datasets
-- Executing Spark transformations
 - Running scheduled ETL jobs
-- Building analytical datasets
 - Triggering recommendation workflows
 - Performing health checks
 
@@ -570,19 +541,6 @@ These optimizations significantly improve analytical performance while reducing 
 
 ---
 
-# 📷 Dashboard Preview
-
-## Grafana Dashboard
-
-> Replace the following images with actual dashboard screenshots.
-
-![Dashboard 1](dashboard/images/dashboard1.png)
-
-![Dashboard 2](dashboard/images/dashboard2.png)
-
-![Dashboard 3](dashboard/images/dashboard3.png)
-
----
 
 # 🔄 Complete Data Pipeline
 
@@ -621,68 +579,6 @@ Gold Layer
         ▼
 Recommendation Pipeline
 ```
-
----
-
-# 📌 Learning Objectives
-
-This project demonstrates practical experience with:
-
-- Event Streaming
-- Distributed Computing
-- Batch Processing
-- Real-Time Processing
-- Data Lakehouse Architecture
-- Workflow Orchestration
-- Data Warehousing
-- Analytical Databases
-- Business Intelligence
-- Containerized Infrastructure
-
----
-
-# 🚀 Future Improvements
-
-Potential enhancements include:
-
-- Apache Iceberg integration
-- Delta Lake support
-- Kubernetes deployment
-- CI/CD pipeline using GitHub Actions
-- Data quality testing with Great Expectations
-- dbt transformation layer
-- Prometheus monitoring
-- Authentication and authorization
-- Multi-node Spark cluster
-- Multi-broker Kafka cluster
-- Real-time anomaly detection
-- Advanced recommendation models
-
----
-
-# 🛠 Troubleshooting
-
-## Kafka is not starting
-
-```bash
-docker compose logs kafka
-```
-
----
-
-## Airflow DAGs are missing
-
-```bash
-docker compose restart airflow
-```
-
----
-
-## Spark jobs fail
-
-Check the Spark Master UI and worker logs for execution details.
-
----
 
 ## Grafana cannot connect to ClickHouse
 
